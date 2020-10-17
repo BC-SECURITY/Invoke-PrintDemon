@@ -1,5 +1,5 @@
 # PrintDemon
-This is an [PowerShell Empire](https://github.com/BC-SECURITY/Empire) launcher PoC using [PrintDemon](https://github.com/ionescu007/PrintDemon) and [Faxhell](https://github.com/ionescu007/faxhell). The module has the Faxhell dll already embedded which levages [CVE-2020-1048](https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2020-1048) for privilege escalation. The vulnerability allows an unprivileged user to gain system-level privileges and is based on @ionescu007 PoC.
+This is an [PowerShell Empire](https://github.com/BC-SECURITY/Empire) launcher PoC using [PrintDemon](https://github.com/ionescu007/PrintDemon) and [Faxhell](https://github.com/ionescu007/faxhell). The module has the Faxhell DLL already embedded which leverages [CVE-2020-1048](https://portal.msrc.microsoft.com/en-US/security-guidance/advisory/CVE-2020-1048) for privilege escalation. The vulnerability allows an unprivileged user to gain system-level privileges and is based on @ionescu007 PoC.
 
 ![Invoke-Demon_Demo](https://user-images.githubusercontent.com/20302208/82018233-b6a83280-9639-11ea-8db0-28a82a5eb5d7.gif)
 
